@@ -2,6 +2,7 @@ package main
 
 import (
    "fmt"
+   "http"
    "io/ioutil"
    "os"
 )
@@ -25,9 +26,15 @@ func loadPage(title string) (*Page, os.Error) {
    return &Page{Title: title, Body: body}, nil
 }
 
+const lenPath = len("/view/")
+
+func viewHandler(w http.ResponseWriter, r *http.Request) {
+   title := r.URL.Path[lenPath:]
+   p, _ := loadPage(title)
+   fmt.Fprintf(w, "<h1>%s</h1><div>%s</div>", p.Title, p.Body)
+}
+
 func main() {
-   p1 := &Page{Title: "TestPage", Body: []byte("This is a sample page.")}
-   p1.save()
-   p2, _ := loadPage("TestPage")
-   fmt.Println(string(p2.Body))
+   http.HandleFunc("/view/", viewHandler)
+   http.ListenAndServe(":8080", nil)
 }
