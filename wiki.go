@@ -1,3 +1,7 @@
+/*
+Based on code walk available at golang.org
+*/
+
 package main
 
 import (
